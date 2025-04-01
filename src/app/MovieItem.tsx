@@ -1,11 +1,11 @@
+import { TMDBMovie } from "@/types/tmdb";
 import Image from "next/image";
-import { TMDBMovie } from "./types/tmdb";
 import Link from "next/link";
 
 const MovieItem = (movie: TMDBMovie) => {
   return (
     <Link href={movie.id.toString()}>
-      <div className=" rounded-2xl p-2.5 border-gray-200 hover:shadow-md">
+      <div className="rounded-2xl p-2.5 border-gray-200 hover:shadow-md">
         <div className="overflow-hidden rounded-2xl hover:shadow-md hover:opacity-90">
           <Image
             alt={movie.title}
@@ -23,17 +23,17 @@ const MovieItem = (movie: TMDBMovie) => {
             )}
             <p className="line-clamp-3">{movie.overview}</p>
           </div>
-        </div>
-        <div className="flex gap-x-2.5 items-center">
-          <div className="flex-1 h-4 rounded-full bg-yellow-50 flex flex-col justify-center px-1">
-            <span
-              className="block h-2 rounded-full bg-yellow-200 "
-              style={{
-                width: `${(movie.vote_average / 10) * 100}%`,
-              }}
-            />
+          <div className="flex gap-x-2.5 items-center">
+            <div className="flex-1 h-4 rounded-full bg-yellow-50 flex flex-col justify-center px-1">
+              <span
+                className="block h-2 rounded-full bg-yellow-200"
+                style={{
+                  width: `${(movie.vote_average / 10) * 100}%`,
+                }}
+              />
+            </div>
+            <p>{movie.vote_average}점</p>
           </div>
-          <p>{movie.vote_average}점</p>
         </div>
       </div>
     </Link>
