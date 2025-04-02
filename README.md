@@ -1,36 +1,85 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 영화정보통
 
-## Getting Started
+tmdb라고 하는 api를 사용하고 익숙해질 수 있도록 next를 사용하여서 개발 함.
 
-First, run the development server:
+- 영화 정보 공유하는 웹사이트
+- 스크랩, 링크 공유도 가능함
+- 문자 보내기 기능도 있음
+- 해당 영화를 클릭시 관련 영화를 추천해줌
+- 관련 영화는 1초마다 자동으로 전환 되는 슬라이드 사용
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## 페이지 상세 요구사항
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+1. 홈페이지
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+   - 그리드를 통해 화면 사이즈 별 카드 컴포넌트 개수를
+     2->3->4 순서로 출력
+   - 하단 부분에 스크롤을 감지하도록 만들어서 무한 스크롤 구현
+   - 리액트 쿼리 대신 리액트 + 웹브라우저 API기능만드로 구현
+   - 카드 컴포넌트를 클릭시 디테일 페이지로 이동할 수 있게 함
+   - Next/Link 컴포넌트 사용하여 구현
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+2. 상세페이지
 
-## Learn More
+   - 영화 원 제목 있을 시 원제목 표현
+   - 장르 보여주기
+   - 링크 복사 버튼
+   - 스크랩 기능
+   - 관련 장르 영화 추천 슬라이드
+   - 1초마다 새로운 영화가 보여줄 수 있도록 자동 플레이
 
-To learn more about Next.js, take a look at the following resources:
+   - navigator.cl....
+   - 스크랩시 ...
+   - next/na....
+   - react slick 라이브러리 ...
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+3. 나의 페이지
+   - 내가 스크랩한 영화를 로컬스토레지에 저장해두고 나의 페이지를 방문했을 때 ...
+   - 내가 스크랩한 영화만 마우스 올리면 링크 복사 기능 구현
+   - onMouseEnter, onMouseLeave속성을 이용해서 마우스...
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### 사용 기술 스택
 
-## Deploy on Vercel
+1. next js
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+   - 리액트를 사용하긴 하지만 모든 컴포넌트는 server component...
+   - 초기 로딩 시간을 줄여주는 효과
+   - 데이터를 가지고 시작함
+   - page.tsx라는 페이지에서는 기본적으로 props를 가지고 있음. params, sear....
+   - rrd 에서는 use...
+   - 'use...
+   - 추가적으로 next의 ...
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+2. react query
+
+   - next 환경에서는 'use client'를 사용한 뒤에만 사용 가능함 -**SSR + react query 조합 공부하기**
+
+3. react slick
+
+   - react-slick 설치 후 ...
+   - react-carous...
+   - react-slick을 ...
+   - Slider 안에 ... -**홈페이지에 중요한 후킹 메세지 등을 슬라이드에 담아서 구현해보기**
+
+4. vercel-deployment
+   **장점**
+   깃허브 리파지토리 불러와서 바로 배포가능, 깃허브에 푸쉬하면 자동으로 ...
+
+**단점**
+환경변수 일일이 적어줘야 함, 배포에서 분제가 생기면 버셀의 인터페이스에 적응해야하는 시간이 있음.....
+
+5. 무한 스크롤
+
+   - 페이지: 내가 현재 불러온 아이템의 페이지 + 앞으로 불러올 페이지의 개수 ...
+   - 로딩상태: 최초 데이터 로딩상태 + 다음 페이지의 데이터 로딩 상태가 추가적으로 생김
+   - 트리거: 언제 어떻게 로딩할지 전략 수립 - 어떠한 컴포넌트가 화면에 들어오는 시점을 기준으로 다음 페이지 데이터를 출력
+   - 옵저버 API: new Inte....
+   - 다음페이지가져오는 함수:기존데이터에 새로운 데이터를 병합하는 방식을 사용-> 기존데이터 담을 그릇, 새로운 데이터 담을 그릇 총 2개.
+   - 조건 감지:트리거로 발동되면 새로운 데이터를 가져오는 상태인지, 다음 페이지가 있는지, 를 동시에 검사해야 함
+   - 페이지를 다 가져오면: 새로운 데이터를 기존데이터에 병합한뒤 새로운 데이터 비우기. 새로운 데이터 가져오는 ...
+
+6. react-query의 useInfiniteQuery => 무한 스크롤 구현에 사용하는 함수
+
+7. react-inters.... => 감지 트리거
+
+**6번,7번 응용버전 생각하고 적용해보기**
