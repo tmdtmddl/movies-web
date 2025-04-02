@@ -6,6 +6,8 @@ import {
 } from "@/types/tmdb";
 import Image from "next/image";
 import MovieSlide from "./MovieSlide";
+import { AiOutlinePaperClip, AiOutlineShareAlt } from "react-icons/ai";
+import Buttons from "./Buttons";
 
 const fetchMovie = async (
   props: PageProps<{ mid: string }>
@@ -32,9 +34,10 @@ const fetchSimilarMovies = async (
 };
 
 const MovieIdPage = async (props: PageProps<{ mid: string }>) => {
+  const { mid } = await props.params;
   const movie = await fetchMovie(props);
   const response = await fetchSimilarMovies(props);
-  return (
+  return !movie ? null : (
     <>
       <div className="flex flex-col md:flex-row">
         <div className="flex-1">
@@ -47,18 +50,23 @@ const MovieIdPage = async (props: PageProps<{ mid: string }>) => {
           />
         </div>
         <div className="p-5 flex flex-col gap-y-2.5 flex-1">
-          <div>
-            {movie.adult && <p className="text-red-500">19금</p>}
-            <h1 className="font-semibold">
-              {movie.title} <span>{movie.origin_country}</span>
-            </h1>
-            {movie.title !== movie.original_title && (
-              <p className="text-gray-500 text-xs">{movie.original_title}</p>
-            )}
-            <p className="text-gray-500 text-xs">{movie.release_date}</p>
+          <div className="flex flex-row">
+            <div className="flex-1">
+              {movie.adult && <p className="text-red-500">19금</p>}
+              <h1 className="font-semibold">
+                {movie.title} <span>{movie.origin_country}</span>
+              </h1>
+              {movie.title !== movie.original_title && (
+                <p className="text-gray-500 text-xs">{movie.original_title}</p>
+              )}
+              <p className="text-gray-500 text-xs">{movie.release_date}</p>
+            </div>
+            <div className="flex gap-x-2.5">
+              <Buttons mid={mid} movie={movie} />
+            </div>
           </div>
           <ul className="flex flex-wrap gap-2.5">
-            {movie.genres.map((genre) => (
+            {movie.genres?.map((genre) => (
               <li
                 key={genre.id}
                 className="bg-gray-50 rounded-md p-2 py-1 hover:bg-gray-100 text-sm"

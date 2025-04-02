@@ -25,14 +25,6 @@ const Home = async () => {
 
   return (
     <div>
-      <div>
-        <h1>{movies.results.length}개의 영화가 있습니다.</h1>
-        <p>{movies.page}번째 페이지 입니다.</p>
-        <p>
-          tmdb에는 {movies.total_results.toLocaleString()}의 영화가 있습니다.
-        </p>
-      </div>
-
       <ReadMore {...movies} />
     </div>
   );
