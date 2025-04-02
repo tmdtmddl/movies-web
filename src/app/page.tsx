@@ -1,6 +1,7 @@
 import { TMDBResponse } from "@/types/tmdb";
 import MovieItem from "./MovieItem";
 import Link from "next/link";
+import ReadMore from "./ReadMore";
 
 const fetchMovies = async (): Promise<TMDBResponse> => {
   const url =
@@ -21,6 +22,7 @@ const fetchMovies = async (): Promise<TMDBResponse> => {
 
 const Home = async () => {
   const movies = await fetchMovies();
+
   return (
     <div>
       <div>
@@ -30,16 +32,8 @@ const Home = async () => {
           tmdb에는 {movies.total_results.toLocaleString()}의 영화가 있습니다.
         </p>
       </div>
-      <Link href="asdfasdf" className="border">
-        Link
-      </Link>
-      <ul className="grid grid-cols-2 gap-5 px-5">
-        {movies.results.map((movie) => (
-          <li key={movie.title}>
-            <MovieItem {...movie} />
-          </li>
-        ))}
-      </ul>
+
+      <ReadMore {...movies} />
     </div>
   );
 };

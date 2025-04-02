@@ -9,7 +9,7 @@ const MovieItem = (movie: TMDBMovie) => {
         <div className="overflow-hidden rounded-2xl hover:shadow-md hover:opacity-90">
           <Image
             alt={movie.title}
-            src={`${process.env.TMDB_IMG_URL}/w500${movie.poster_path}`}
+            src={`${process.env.NEXT_PUBLIC_TMDB_IMG_URL}/w500${movie.poster_path}`}
             width={180}
             height={320}
             className="w-full"

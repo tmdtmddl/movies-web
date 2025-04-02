@@ -56,6 +56,9 @@ export const tmdbOptions = (method: string = "GET") => ({
   method,
   headers: {
     accept: "application/json",
-    Authorization: `Bearer ${process.env.TMDB_ACCESS_TOKEN}`,
+    Authorization: `Bearer ${
+      process.env.NEXT_PUBLIC_TMDB_ACCESS_TOKEN ??
+      "eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIyNWRiNmZmMjZlODUxN2ZkNDZjMmVlNjc5NDRmYTA2OCIsIm5iZiI6MTY5MTE2NjEyNC44MTcsInN1YiI6IjY0Y2QyNWFjZjY3ODdhMDBlNTE1MTFjZSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.eMaRVtXoybrYdojImZxTNmvGLaNoLzzNIbT8ryCNe0o"
+    }`,
   },
 });
