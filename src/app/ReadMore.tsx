@@ -49,7 +49,7 @@ const ReadMore = (movies: TMDBResponse) => {
 
   return (
     <>
-      <ul className="grid grid-cols-2 gap-5 px-5">
+      <ul className="grid grid-cols-2 gap-5 px-5 sm:grid-cols-3 md:grid-cols-4 max-w-300 mx-auto">
         {totalMovies.map((movie) => (
           <li key={movie.title}>
             <MovieItem {...movie} />
