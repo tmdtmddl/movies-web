@@ -1,33 +1,29 @@
 import { TMDBResponse } from "@/types/tmdb";
-import MovieItem from "./MovieItem";
-import Link from "next/link";
 import ReadMore from "./ReadMore";
 
 const fetchMovies = async (): Promise<TMDBResponse> => {
-  const url =
-    "https://api.themoviedb.org/3/discover/movie?include_adult=false&include_video=false&language=en-US&page=1&sort_by=popularity.desc";
+  const url = `${process.env.NEXT_PUBLIC_URL}/api/v0/tmdb`;
+  try {
+    const res = await fetch(url);
+    console.log(res, 10);
+    if (!res.ok) {
+    }
+    const data = await res.json();
+    if (data.status_code && !data.success) {
+      console.log(data, 14);
+      return { page: 1, results: [], total_pages: 0, total_results: 0 };
+    }
 
-  const options = {
-    method: "GET",
-    headers: {
-      accept: "application/json",
-      Authorization: `Bearer ${process.env.TMDB_ACCESS_TOKEN}`,
-    },
-  };
-  const res = await fetch(url, options);
-  const data = await res.json();
-
-  return data;
+    return data as TMDBResponse;
+  } catch (error: any) {
+    console.log(error.message);
+    return { page: 1, results: [], total_pages: 0, total_results: 0 };
+  }
 };
 
 const Home = async () => {
   const movies = await fetchMovies();
-
-  return (
-    <div>
-      <ReadMore {...movies} />
-    </div>
-  );
+  return <ReadMore {...movies} />;
 };
 
 export default Home;

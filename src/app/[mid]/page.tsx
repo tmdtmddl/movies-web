@@ -6,29 +6,36 @@ import {
 } from "@/types/tmdb";
 import Image from "next/image";
 import MovieSlide from "./MovieSlide";
-import { AiOutlinePaperClip, AiOutlineShareAlt } from "react-icons/ai";
 import Buttons from "./Buttons";
 
 const fetchMovie = async (
   props: PageProps<{ mid: string }>
-): Promise<TMDBMovieDetail> => {
+): Promise<TMDBMovieDetail | null> => {
   const { mid } = await props.params;
-  const url = `https://api.themoviedb.org/3/movie/${mid}?language=en-US`;
+  const url = `${process.env.NEXT_PUBLIC_URL}/api/v0/tmdb?mid=${mid}`;
 
-  const res = await fetch(url, tmdbOptions());
-  const data = (await res.json()) as TMDBMovieDetail;
+  const res = await fetch(url);
+  const data = await res.json();
+  if (data.status_code && !data.success) {
+    console.log(data.status_message, 21);
+    return null;
+  }
 
   return data;
 };
 
 const fetchSimilarMovies = async (
   props: PageProps<{ mid: string }>
-): Promise<TMDBResponse> => {
+): Promise<TMDBResponse | null> => {
   const { mid } = await props.params;
-  const url = `https://api.themoviedb.org/3/movie/${mid}/similar?language=en-US&page=1`;
+  const url = `${process.env.NEXT_PUBLIC_URL}/api/v0/tmdb/similar?mid=${mid}`;
 
   const res = await fetch(url, tmdbOptions());
   const data = await res.json();
+  if (data.status_code && !data.success) {
+    console.log(data.status_message, 21);
+    return null;
+  }
 
   return data;
 };
@@ -96,7 +103,7 @@ const MovieIdPage = async (props: PageProps<{ mid: string }>) => {
         </div>
       </div>
 
-      <MovieSlide {...response} />
+      {response && <MovieSlide {...response} />}
     </>
   );
 };
