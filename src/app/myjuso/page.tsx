@@ -28,9 +28,9 @@ const MyJusoPage = () => {
   const [isPending, startTransition] = useTransition();
   const onSubmit = useCallback(() => {
     startTransition(async () => {
-      const res = await fetch("/api/v1/juso", {
+      const res = await fetch(`/api/v1/juso`, {
         method: "POST",
-        body: JSON.stringify(keyword),
+        body: JSON.stringify({ keyword }),
       });
       const data = (await res).json();
       console.log(data);
@@ -38,6 +38,11 @@ const MyJusoPage = () => {
   }, []);
   return (
     <div className="mt-5">
+      {/* <ul>
+        {items.map((item, index) => (
+          <li key={index}>{item.roadAddr}</li>
+        ))}
+      </ul> */}
       <form
         action=""
         className="flex max-w-80 mx-auto gap-x-2.5"
@@ -55,6 +60,7 @@ const MyJusoPage = () => {
         />
         <button className="bg-amber-300 p-2 rounded">검색</button>
       </form>
+
       <ul>
         {items?.map((item) => (
           <li key={item.bdMgtSn}>
