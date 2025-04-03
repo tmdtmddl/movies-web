@@ -1,24 +1,20 @@
 "use client";
-
-import { useCallback, useEffect, useState } from "react";
 import { twMerge } from "tailwind-merge";
-import { Line } from "react-chartjs-2";
+import { useCallback, useEffect, useState } from "react";
 import { Chart, registerables } from "chart.js";
 import * as Charts from "react-chartjs-2";
-
 Chart.register(...registerables);
 
 interface WProps {
   baseDate: string;
   baseTime: string;
-  category: getShortCategory;
+  category: ShortValueTarget;
   fcstDate: string;
   fcstTime: string;
   fcstValue: string;
   nx: number;
   ny: number;
 }
-
 const categories: ShortCategory[] = [
   "강수확률",
   "강수형태",
@@ -35,46 +31,44 @@ const categories: ShortCategory[] = [
   "풍향",
   "풍속",
 ];
-
 const WCom = (props: any | { message: string }) => {
   const [data, setData] = useState(props);
-  const [category, setCategory] = useState<ShortCategory>("강수확률");
 
+  const [category, setCategory] = useState<ShortCategory>("강수확률");
   const [items, setItems] = useState<WProps[]>([]);
+
   useEffect(() => {
     if (data.message) {
       alert(data.message);
     } else {
-      //! data가공
+      //! data 가공
       const copy: WProps[] = [];
-      items.map((item: WProps) => {
-        const found = getShotValue(item.category) === category;
+      data.body.items.item.map((item: WProps) => {
+        const found = getShortValue(item.category) === category;
         if (found) {
           copy.push(item);
         }
       });
+
+      console.log(copy);
       setItems(copy);
     }
-  }, [data]);
+  }, [data, category]);
 
   const onTest = useCallback(() => {
     let totalPage = 0;
-    // console.log(data);
-    // console.log(data.body.totalCount / data.body.numOfRows);
     totalPage = Math.ceil(data.body.totalCount / data.body.numOfRows);
-    // console.log({ totalPage });
-    console.log(data);
-    const items = data.body.items.item;
-    let copy: WProps[] = [];
-
-    items.map((item: WProps) => {
-      const found = getShotValue(item.category) === category;
+    const copy: WProps[] = [];
+    data.body.items.item.map((item: WProps) => {
+      const found = getShortValue(item.category) === category;
       if (found) {
         copy.push(item);
       }
     });
-  }, [data, category]);
 
+    console.log(copy);
+    setItems(copy);
+  }, [data, category]);
   return (
     <div className="mt-[1px]">
       <ul className="flex overflow-x-auto">
@@ -93,29 +87,23 @@ const WCom = (props: any | { message: string }) => {
           </li>
         ))}
       </ul>
-      <button onClick={onTest}>강수확률</button>
-
+      <button onClick={onTest}>{category}</button>
       {/* <ul>
         {items.map(({ category, fcstValue, baseTime, fcstTime }, index) => (
           <li key={index}>
-            [{getShotValue(category)}]-{fcstValue} ({baseTime}/예보시간:
+            [{getShortValue(category)}] - {fcstValue} ({baseTime}/예보시간:
             {fcstTime})
           </li>
         ))}
       </ul> */}
-
       <Charts.Line
-        datasetIdKey="line-chart"
         data={{
           labels: items.map((item) => item.fcstTime),
           datasets: [
             {
               label: category,
               data: items.map((item) => item.fcstValue),
-              borderWidth: 2,
-              backgroundColor: "pink",
-              borderColor: "black",
-              pointBackgroundColor: "yellow",
+              borderWidth: 1,
               fill: true,
             },
           ],
@@ -127,7 +115,7 @@ const WCom = (props: any | { message: string }) => {
 
 export default WCom;
 
-type getShortCategory =
+type ShortValueTarget =
   | "POP"
   | "PTY"
   | "PCP"
@@ -142,6 +130,7 @@ type getShortCategory =
   | "WAV"
   | "VEC"
   | "WSD";
+
 type ShortCategory =
   | "강수확률"
   | "강수형태"
@@ -158,7 +147,7 @@ type ShortCategory =
   | "풍향"
   | "풍속";
 
-const getShotValue = (target: getShortCategory): ShortCategory => {
+const getShortValue = (target: ShortValueTarget): ShortCategory => {
   switch (target) {
     case "POP":
       return "강수확률";
@@ -190,3 +179,24 @@ const getShotValue = (target: getShortCategory): ShortCategory => {
       return "풍속";
   }
 };
+
+// import { Line } from 'react-chartjs-2';
+
+// <Line
+//   datasetIdKey='id'
+//   data={{
+//     labels: ['Jun', 'Jul', 'Aug'],
+//     datasets: [
+//       {
+//         id: 1,
+//         label: '',
+//         data: [5, 6, 7],
+//       },
+//       {
+//         id: 2,
+//         label: '',
+//         data: [3, 2, 1],
+//       },
+//     ],
+//   }}
+// />

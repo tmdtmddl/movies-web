@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useCallback, useState, useTransition } from "react";
 
 //Todo
 // 1. api/v1/juso/route.ts
@@ -13,9 +13,29 @@ import { useState } from "react";
 // 4.받아온 주소들 map으로 구현
 // 5.pagination 구현
 // 6.나머지 주소 입력 구현
-
+interface JusoProps {
+  bdMgtSn: string;
+  roadAddr: string;
+  siNm: string;
+  sggNm: string;
+  rn: string;
+  zipNo: string;
+}
 const MyJusoPage = () => {
   const [keyword, setKeyword] = useState("");
+  const [items, setItems] = useState<JusoProps[]>([]);
+  const [juso, setJuso] = useState<JusoProps | null>(null);
+  const [isPending, startTransition] = useTransition();
+  const onSubmit = useCallback(() => {
+    startTransition(async () => {
+      const res = await fetch("/api/v1/juso", {
+        method: "POST",
+        body: JSON.stringify(keyword),
+      });
+      const data = (await res).json();
+      console.log(data);
+    });
+  }, []);
   return (
     <div className="mt-5">
       <form
@@ -23,16 +43,31 @@ const MyJusoPage = () => {
         className="flex max-w-80 mx-auto gap-x-2.5"
         onSubmit={(e) => {
           e.preventDefault();
+          onSubmit();
         }}
       >
         <input
           type="text"
           value={keyword}
           onChange={(e) => setKeyword(e.target.value)}
-          className="border h-10 rounded"
+          className="border h-10 rounded p-2"
+          placeholder="주소를 입력해주세요."
         />
         <button className="bg-amber-300 p-2 rounded">검색</button>
       </form>
+      <ul>
+        {items?.map((item) => (
+          <li key={item.bdMgtSn}>
+            <button
+              onClick={() => {
+                setJuso(item);
+              }}
+            >
+              {item.roadAddr}
+            </button>
+          </li>
+        ))}
+      </ul>
     </div>
   );
 };
