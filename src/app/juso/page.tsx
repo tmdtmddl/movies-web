@@ -9,6 +9,7 @@ import {
   IoChevronForward,
   IoChevronUp,
 } from "react-icons/io5";
+import axios from "axios";
 
 interface JusoProps {
   bdMgtSn: string; //! unique id
@@ -41,19 +42,32 @@ const Juso = () => {
         return keywordRef.current?.focus();
       }
       startTransition(async () => {
-        const res = await fetch(`/api/v0/test/juso?pageNo=${pageNo}`, {
-          method: "POST",
-          body: JSON.stringify(keyword),
-        });
+        const url = `/api/v0/test/juso?pageNo=${pageNo}`;
 
         try {
-          const data = await res.json();
+          const { data } = await axios.post(url, { keyword });
+          console.log(data);
           setIsShowing(true);
           setTotalCount(data.totalCount);
           setItems(data.items);
         } catch (error: any) {
           console.log(error);
+          alert(error.response.data);
         }
+
+        //   const res = await fetch(`/api/v0/test/juso?pageNo=${pageNo}`, {
+        //     method: "POST",
+        //     body: JSON.stringify(keyword),
+        //   });
+
+        //   try {
+        //     const data = await res.json();
+        //     setIsShowing(true);
+        //     setTotalCount(data.totalCount);
+        //     setItems(data.items);
+        //   } catch (error: any) {
+        //     console.log(error);
+        //   }
       });
     },
     [keyword, juso]

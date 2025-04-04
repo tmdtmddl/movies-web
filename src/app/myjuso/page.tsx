@@ -1,6 +1,10 @@
 "use client";
+//여기는 프론트엔드 구간
 
-import { useCallback, useState, useTransition } from "react";
+import { useCallback, useRef, useState, useTransition } from "react";
+import RootLoading from "../loading";
+import { FaSortDown, FaCaretUp } from "react-icons/fa";
+import { useRouter } from "next/navigation";
 
 //Todo
 // 1. api/v1/juso/route.ts
@@ -14,38 +18,47 @@ import { useCallback, useState, useTransition } from "react";
 // 5.pagination 구현
 // 6.나머지 주소 입력 구현
 interface JusoProps {
-  bdMgtSn: string;
+  bdMgtSn: string; // 아이디로 활용할 것
   roadAddr: string;
   siNm: string;
   sggNm: string;
   rn: string;
   zipNo: string;
 }
+
 const MyJusoPage = () => {
   const [keyword, setKeyword] = useState("");
+  const [detailaddress, setDetailaddress] = useState("");
   const [items, setItems] = useState<JusoProps[]>([]);
   const [juso, setJuso] = useState<JusoProps | null>(null);
+  const [isShowing, setIsShowing] = useState(true);
+  const [address, setAddress] = useState("");
+  const itemRef = useRef<HTMLInputElement>(null);
+  const detailRef = useRef<HTMLInputElement>(null);
   const [isPending, startTransition] = useTransition();
+  const navi = useRouter();
   const onSubmit = useCallback(() => {
     startTransition(async () => {
       const res = await fetch(`/api/v1/juso`, {
         method: "POST",
-        body: JSON.stringify({ keyword }),
+        body: JSON.stringify(keyword),
       });
-      const data = (await res).json();
-      console.log(data);
+      console.log(keyword);
+      const data = await res.json();
+      console.log({ data });
+      setItems(data.items ?? []); //item에 data에서 넘어온걸 담아야 화면에 나옴
+      if (data.items.length === 0) {
+        alert("주소를 상세히 입력해주세요.");
+        return itemRef.current?.focus();
+      }
     });
-  }, []);
+  }, [keyword]);
   return (
-    <div className="mt-5">
-      {/* <ul>
-        {items.map((item, index) => (
-          <li key={index}>{item.roadAddr}</li>
-        ))}
-      </ul> */}
+    <div className="mt-5 max-w-100 mx-auto flex flex-col gap-y-2.5">
+      {isPending && <RootLoading />}
       <form
         action=""
-        className="flex max-w-80 mx-auto gap-x-2.5"
+        className="flex max-w-100 mx-auto gap-x-1"
         onSubmit={(e) => {
           e.preventDefault();
           onSubmit();
@@ -55,25 +68,111 @@ const MyJusoPage = () => {
           type="text"
           value={keyword}
           onChange={(e) => setKeyword(e.target.value)}
-          className="border h-10 rounded p-2"
-          placeholder="주소를 입력해주세요."
+          className="border h-10 rounded p-2 min-w-70 bg-white border-amber-500 focus:border-amber-400"
+          placeholder="주소를 ㅇㅇ구까지 입력해주세요."
+          id="keyword"
         />
         <button className="bg-amber-300 p-2 rounded">검색</button>
       </form>
-
-      <ul>
-        {items?.map((item) => (
-          <li key={item.bdMgtSn}>
-            <button
-              onClick={() => {
-                setJuso(item);
-              }}
+      {items.length > 0 && (
+        <div>
+          <button
+            onClick={() => {
+              setIsShowing((prev) => !prev);
+            }}
+            className="border p-1 rounded bg-amber-300 text-gray-600"
+          >
+            {isShowing ? (
+              <div className="flex">
+                접기
+                <FaCaretUp />
+              </div>
+            ) : (
+              <div className="flex">
+                펼치기
+                <FaSortDown />
+              </div>
+            )}
+          </button>
+        </div>
+      )}
+      {isShowing && (
+        <div>
+          <ul className="flex flex-col gap-y-2.5">
+            {items.map((item) => {
+              return (
+                <li key={item.bdMgtSn}>
+                  <button
+                    className="hover:text-amber-500 hover:border hover:border-amber-700 hover:p-1 hover:rounded-xl cursor-pointer"
+                    onClick={() => {
+                      setJuso(item);
+                      setIsShowing(false);
+                      return detailRef.current?.focus();
+                    }}
+                  >
+                    {item.roadAddr}
+                  </button>
+                </li>
+              );
+            })}
+          </ul>
+        </div>
+      )}
+      {juso && (
+        <>
+          <div className="flex gap-x-2">
+            <label
+              htmlFor="keyword"
+              className="border-2 p-2.5 bg-amber-100 rounded border-amber-400 "
             >
-              {item.roadAddr}
-            </button>
-          </li>
-        ))}
-      </ul>
+              {juso?.roadAddr}
+            </label>
+            <label
+              htmlFor="keyword"
+              className="border-2 p-2.5 bg-amber-100 rounded border-amber-400 "
+            >
+              {juso?.zipNo}
+            </label>
+          </div>
+          <form
+            action=""
+            className="flex flex-col"
+            onSubmit={(e) => {
+              e.preventDefault();
+            }}
+          >
+            <label htmlFor="" className="text-md">
+              상세주소
+            </label>
+            <div className="flex gap-x-1">
+              <input
+                type="text"
+                className="border p-1 rounded border-amber-400"
+                value={detailaddress}
+                onChange={(e) => setDetailaddress(e.target.value)}
+                ref={detailRef}
+              />
+              <button
+                className=" p-1 rounded bg-amber-300"
+                onClick={() => {
+                  if (
+                    confirm(
+                      `입력하신주소가 ${juso.roadAddr}${detailaddress}, 우편번호${juso.zipNo}가 맞나요?`
+                    )
+                  ) {
+                    alert("확인되었습니다.");
+                    return navi.push("/");
+                  } else {
+                    return alert("다시확인해주세요.");
+                  }
+                }}
+              >
+                입력
+              </button>
+            </div>
+          </form>
+        </>
+      )}
     </div>
   );
 };

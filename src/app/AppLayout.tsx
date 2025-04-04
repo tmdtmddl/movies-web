@@ -1,9 +1,12 @@
+"use client";
+
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import Link from "next/link";
 import { PropsWithChildren } from "react";
 
 const AppLayout = ({ children }: PropsWithChildren) => {
   return (
-    <>
+    <QueryClientProvider client={new QueryClient()}>
       <header className="fixed top-0 left-0 z-40 bg-white w-full border-b border-gray-200">
         <div className="h-15 max-w-300 mx-auto flex justify-between">
           <Link
@@ -23,7 +26,7 @@ const AppLayout = ({ children }: PropsWithChildren) => {
         </div>
       </header>
       <main className="pt-15">{children}</main>
-    </>
+    </QueryClientProvider>
   );
 };
 
