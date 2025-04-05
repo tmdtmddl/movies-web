@@ -5,6 +5,8 @@ import { useCallback, useRef, useState, useTransition } from "react";
 import RootLoading from "../loading";
 import { FaSortDown, FaCaretUp } from "react-icons/fa";
 import { useRouter } from "next/navigation";
+import Pagination from "react-js-pagination";
+import "../wild/wId/pagination.css";
 
 //Todo
 // 1. api/v1/juso/route.ts
@@ -31,11 +33,20 @@ const MyJusoPage = () => {
   const [detailaddress, setDetailaddress] = useState("");
   const [items, setItems] = useState<JusoProps[]>([]);
   const [juso, setJuso] = useState<JusoProps | null>(null);
-  const [isShowing, setIsShowing] = useState(true);
+  const [isShowing, setIsShowing] = useState(false);
   const [address, setAddress] = useState("");
   const itemRef = useRef<HTMLInputElement>(null);
   const detailRef = useRef<HTMLInputElement>(null);
   const [isPending, startTransition] = useTransition();
+  const [page, setPage] = useState<number>(1); //현재 페이지 번호
+  const postPerPage = 8; //페이지당 게시글 개수
+  const indexOfLastPost = page * postPerPage; //마지막 인덱스
+  const indexOfFirstPost = indexOfLastPost - postPerPage; //처음인덱스
+  const itemsLength = items.length;
+
+  const handlePageChange = (page: number) => {
+    setPage(page);
+  };
   const navi = useRouter();
   const onSubmit = useCallback(() => {
     startTransition(async () => {
@@ -124,26 +135,39 @@ const MyJusoPage = () => {
         </div>
       )}
       {isShowing && (
-        <div>
-          <ul className="flex flex-col gap-y-2.5">
-            {items.map((item) => {
-              return (
-                <li key={item.bdMgtSn}>
-                  <button
-                    className="hover:text-amber-500 hover:border hover:border-amber-700 hover:p-1 hover:rounded-xl cursor-pointer"
-                    onClick={() => {
-                      setJuso(item);
-                      setIsShowing(false);
-                      return detailRef.current?.focus();
-                    }}
-                  >
-                    {item.roadAddr}
-                  </button>
-                </li>
-              );
-            })}
-          </ul>
-        </div>
+        <>
+          <div>
+            <ul className="flex flex-col gap-y-2.5">
+              {/* 맵을 slice를 이용해서 현재 페이지에나올것만 보여주기 */}
+              {items.slice(indexOfFirstPost, indexOfLastPost).map((item) => {
+                return (
+                  <li key={item.bdMgtSn}>
+                    <button
+                      className="hover:text-amber-500 hover:border hover:border-amber-700 hover:p-1 hover:rounded-xl cursor-pointer"
+                      onClick={() => {
+                        setJuso(item);
+                        setIsShowing(false);
+                        return detailRef.current?.focus();
+                      }}
+                    >
+                      {item.roadAddr}
+                    </button>
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
+
+          <Pagination
+            activePage={page} //현재페이지
+            itemsCountPerPage={postPerPage} //한페이지랑 보여줄 아이템 갯수
+            totalItemsCount={itemsLength} //총 아이템갯수
+            pageRangeDisplayed={5} //paginator의 페이지 범위
+            prevPageText={"<"} //이전을 나타낼 텍스트
+            nextPageText={">"} //다음을 나타낼 텍스트
+            onChange={handlePageChange} //페이지변경을 핸들링하는 함수
+          />
+        </>
       )}
       {juso && (
         <>
