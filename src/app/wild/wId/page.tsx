@@ -51,7 +51,7 @@ const WildHomePage = () => {
   return (
     <div className="flex flex-col gap-y-2.5">
       {isPending && <RootLoading />}
-      <div className="bg-lime-600 p-2.5 flex flex-col items-center">
+      <div className="bg-lime-600 p-2.5 flex flex-col items-center shadow-xl">
         <p className="font-bold text-xl ">대전광역시 서구</p>
         <p className="font-bold text-xl">유해야생동물 포획 현황</p>
       </div>
@@ -61,7 +61,7 @@ const WildHomePage = () => {
           {wilds.slice(indexOfFirstPost, indexOfLastPost).map((wild) => (
             <li
               key={wild.sn}
-              className="border-3 border-gray-400 bg-lime-50 rounded hover:border-green-800"
+              className="border-3 border-gray-400 bg-lime-50 rounded hover:border-green-800 hover:shadow-xl"
             >
               <WildItemPage {...wild} />
             </li>

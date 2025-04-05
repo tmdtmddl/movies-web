@@ -53,6 +53,33 @@ const MyJusoPage = () => {
       }
     });
   }, [keyword]);
+
+  const ondeatilJuso = useCallback(() => {
+    if (!juso) {
+      if (items.length === 0) {
+        alert("주소를 먼저 검색해주세요");
+        setKeyword("");
+        setIsShowing(false);
+        return itemRef.current?.focus();
+      }
+      alert("주소를 선택해주세요");
+      return itemRef.current?.focus();
+    }
+    if (detailaddress.length === 0) {
+      alert("상세주소를 입력해주세요.");
+      return detailRef.current?.focus();
+    }
+    if (
+      confirm(
+        `입력하신주소가 ${juso.roadAddr}${detailaddress}, 우편번호${juso.zipNo}가 맞나요?`
+      )
+    ) {
+      alert("확인되었습니다.");
+      return navi.push("/");
+    } else {
+      return alert("다시확인해주세요.");
+    }
+  }, [juso, items, detailaddress]);
   return (
     <div className="mt-5 max-w-100 mx-auto flex flex-col gap-y-2.5">
       {isPending && <RootLoading />}
@@ -139,6 +166,7 @@ const MyJusoPage = () => {
             className="flex flex-col"
             onSubmit={(e) => {
               e.preventDefault();
+              ondeatilJuso();
             }}
           >
             <label htmlFor="" className="text-md">
@@ -152,23 +180,7 @@ const MyJusoPage = () => {
                 onChange={(e) => setDetailaddress(e.target.value)}
                 ref={detailRef}
               />
-              <button
-                className=" p-1 rounded bg-amber-300"
-                onClick={() => {
-                  if (
-                    confirm(
-                      `입력하신주소가 ${juso.roadAddr}${detailaddress}, 우편번호${juso.zipNo}가 맞나요?`
-                    )
-                  ) {
-                    alert("확인되었습니다.");
-                    return navi.push("/");
-                  } else {
-                    return alert("다시확인해주세요.");
-                  }
-                }}
-              >
-                입력
-              </button>
+              <button className=" p-1 rounded bg-amber-300">입력</button>
             </div>
           </form>
         </>

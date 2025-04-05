@@ -56,7 +56,7 @@ const WildDtailPage = async (props: PageProps<{ sn: string }>) => {
 
   return (
     <div>
-      <div className="bg-lime-600 p-2.5 flex flex-col items-center">
+      <div className="bg-lime-600 p-2.5 flex flex-col items-center shadow-xl">
         <p className="font-bold text-xl ">대전광역시 서구</p>
         <p className="font-bold text-xl">유해야생동물 포획 현황</p>
       </div>
@@ -75,6 +75,9 @@ const WildDtailPage = async (props: PageProps<{ sn: string }>) => {
           </p>
           <p>
             <b className={fontSize}>포획일자</b>:{wild?.capt_de}
+          </p>
+          <p>
+            <b className={fontSize}>포획장소</b>:{wild?.capt_plce_adrs}
           </p>
           <p>
             <b className={fontSize}>멧돼지수</b>:{wild?.wdbr_co}
