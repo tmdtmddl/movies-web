@@ -17,10 +17,10 @@
 - 트리거 (언제 불러옴?)
 - 스크롤을 끝까지 내렸을 때를 감지하여서 동작
 - 화면에 요소가 등장하는 것을 나타내는 상태
-- new IntersectiongObserver()
+- new IntersectingObserver() ㄴㄴ
 - react-intersection-observer 이거 쓰면 짱 쉬움
 - useInfiniteQuery
-- 다음페이지가 잇는지, 로딩중인지, 에러가 있는 지, 데이터값 (페이지들),다음페이지 불러오는 함수
+- 다음 페이지가 있는지, 로딩중인지, 에러가 있는지, 데이터값 (페이지들), 다음페이지불러오는 함수
 
 ### useInfiniteQuery
 
@@ -28,20 +28,20 @@
 
 2. initialPageParam:1 => 0안됨 1로 시작
 
-3. get...
+3. getNextPageParam => 다음 페이지가 있는지 없는지를 조건을 걸어서 확인하는 구역
 
    - 다음 페이지가 있다면 다음 페이지의 숫자를 return
-   - 다음 페이지가 없다면 ...
-   - 현재 페이지 < 총.....
-   - return ...
+   - 다음 페이지가 없다면 undefined return
+   - 현재 페이지 < 총 페이지의 갯수 => return 현재 페이지 + 1
+   - return undefined
 
 4. queryFn => 다음페이지도 불러오고 최초의 페이지도 불러오는 함수
 
-   - (하나의인자) => 하나의 인자는 {pageParam}등 여러 ...
-   - 공공데이터 특 => pageNo의 쿼리값을 줌
+   - (하나의인자) => 하나의 인자는 {pageParam} 등 여러 값이 있지만 pageParam이 제일 중요
+   - 공공데이터 특 => pageNo 의 쿼리값을 줌
    - 필요한 로직 수행
 
-5. infiniteQuery가 주는 휼륭한 값들
+5. infiniteQuery가 주는 훌륭한 값들
 
    1. isPending
 
@@ -55,8 +55,8 @@
    3. hasNextPage
 
       - 다음페이지가 있는 알려주는 불리언
-      - get...
-      - undfined => 거짓
+      - getNextPageParam의 return 값이 숫자 일때만 참
+      - undefined => 거짓
 
    4. fetchNextPage(함수)
       queryFn 그 잡채
@@ -64,33 +64,36 @@
    5. data(배열[]배열[])
 
    ```javascript
-   const data =[]
-   [
-       pageData[],
-       pageData[],
-       pageData[],
-   ]
+   const data = []
 
-   data.map(
-       //<key={XXX}></>
-       (page,pageIndex)=><React.Fragment key={pageIndex}>
-       {page.map(
-           (item,itemIndex)=><ItemComponent {...item} key={.................}/>
-       )}
-       </React.Fragment>
+    [
+        pageData[],
+        pageData[],
+        pageData[],
+    ]
 
-   )
+
+    data.map(
+        // < key={xxx} ></>
+        (page, pageIndex) => <React.Fragment key={pageIndex}>
+
+            {page.map(
+                (item, itemIndex) => <ItemComponent {...item} key={itemIndex ?? item.uniqueId}>
+            )}
+
+        </React.Fragment>
+    )
    ```
 
 #### 리액트쿼리 안쓰고 리액트로 다 구현하기
 
 1. 최초 1회 로딩 상태
-2. 무한...
+2. 무한 스크롤 시 로딩 되는 상태
 3. 현재 페이지
-4. 모든 ...
-5. 다음 페이지...
+4. 모든 페이지 갯수
+5. 다음 페이지 있는지 상태
 6. 함수 만들기
 7. 최초의 데이터 배열
-8. 무한 ...
+8. 무한 스크롤로 받아온 데이터 배열
 
-   - 무한 스크롤로 받아온 데이터를 무한 스크롤 데이털르 받아오는 것이 종료되면 최초의 데이터 배열에 ....
+   - 무한 스크롤로 받아온 데이터를 무한 스크롤 데이터를 받아오는 것이 종료되면 최초의 데이터 배열에 합치기 후 받아온 데이터를 초기화

@@ -1,9 +1,13 @@
 "use client";
 import { useInfiniteQuery } from "@tanstack/react-query";
-import Image from "next/image";
-import React, { useCallback, useEffect, useState } from "react";
-import RootLoading from "../loading";
+import React, { useEffect, useState } from "react";
 import { useInView } from "react-intersection-observer";
+import RootLoading from "../loading";
+import Image from "next/image";
+
+// const Fn = (data: string) =>{}
+// Fn('asdfasdfsd')
+// <Fn data={'asdfadsfasd'} />
 
 interface Animal {
   adoptionStatusCd: string;
@@ -26,58 +30,56 @@ interface Animal {
   species: string;
   weight: string;
 }
-
 const XMLExtractor = () => {
-  const [states, setStates] = useState({
-    pageNo: 1,
-    totalCount: 0,
-    numOfRows: 20,
-    totalPage: 0,
-  });
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPage, setTotalPage] = useState(0);
 
   const { ref, inView } = useInView({
     threshold: 0.75,
   });
 
-  const { isPending, error, data, hasNextPage, fetchNextPage } =
+  const { isPending, error, hasNextPage, fetchNextPage, data } =
     useInfiniteQuery({
-      queryKey: ["animals"],
-      queryFn: async ({ pageParam }) => {
+      queryKey: ["animals", "abandoned animals"],
+      initialPageParam: currentPage,
+      getNextPageParam: () => {
+        if (currentPage < totalPage) {
+          return currentPage + 1;
+        }
+        return undefined;
+      },
+      queryFn: async ({ pageParam }): Promise<Animal[]> => {
         const res = await fetch(`/api/v0/animals?pageNo=${pageParam}`);
+
         const animalXml = await res.json();
+
         const parser = new DOMParser();
         const xmlDoc = parser.parseFromString(animalXml, "text/xml");
 
         let errorMessage: null | { authMessage: string; message: string } =
           null;
+
         const message = xmlDoc.getElementsByTagName("errMsg");
         const authMessage = xmlDoc.getElementsByTagName("returnAuthMsg");
+
         if (message.length > 0 && authMessage.length > 0) {
           errorMessage = {
             message: message[0].textContent!,
-            authMessage: message[0].textContent!,
+            authMessage: authMessage[0].textContent!,
           };
         }
+
         if (errorMessage) {
-          return alert(`${errorMessage}:${errorMessage.authMessage}`);
+          alert(`${errorMessage.message}: ${errorMessage.authMessage}`);
+          return [];
         }
-        const numOfRows =
-          xmlDoc.getElementsByTagName("numOfRows")[0].textContent;
 
         const pageNo = xmlDoc.getElementsByTagName("pageNo")[0].textContent;
-
-        const totalCount =
-          xmlDoc.getElementsByTagName("totalCount")[0].textContent;
-
         const totalPage =
           xmlDoc.getElementsByTagName("totalPage")[0].textContent;
 
-        setStates({
-          numOfRows: Number(numOfRows),
-          totalPage: Number(totalPage),
-          pageNo: Number(pageNo),
-          totalCount: Number(totalCount),
-        });
+        setCurrentPage(Number(pageNo));
+        setTotalPage(Number(totalPage));
 
         const items = xmlDoc.getElementsByTagName("items");
 
@@ -102,9 +104,7 @@ const XMLExtractor = () => {
           "species",
           "weight",
         ];
-        // console.log(items[0]);
 
-        //반복문돌리기전에 껍데기임
         const animals: Animal[] = [];
         for (const item of items) {
           const data: any = {};
@@ -114,145 +114,51 @@ const XMLExtractor = () => {
               data[target] = values[0].textContent;
             }
           });
-          animals.push(data); //animals에 data를 푸쉬해줌
+
+          animals.push(data);
         }
         return animals;
-      },
-
-      initialPageParam: 1,
-      getNextPageParam: (lastPage) => {
-        if (states.pageNo < states.totalPage) {
-          return states.pageNo + 1;
-        }
-        return undefined;
       },
     });
 
   useEffect(() => {
     if (inView && !isPending && hasNextPage) {
+      console.log("무한 스크롤 트리거 작동!");
       fetchNextPage();
     }
-  }, [inView, hasNextPage, fetchNextPage, isPending]);
-
-  const [xml, setXml] = useState("");
-
-  const [animals, setAnimals] = useState<Animal[]>([]);
-
-  const onXML = useCallback(() => {
-    console.log(xml, typeof xml);
-    if (!xml || typeof xml !== "string") {
-      return;
-    }
-    // const parser = new DOMParser();
-    // const xmlDoc = parser.parseFromString(xml, "text/xml");
-    // console.log(xmlDoc);
-    // let errorMessage: null | { authMessage: string; message: string } = null;
-    // const message = xmlDoc.getElementsByTagName("errMsg");
-    // const authMessage = xmlDoc.getElementsByTagName("returnAuthMsg");
-    // if (message.length > 0 && authMessage.length > 0) {
-    //   errorMessage = {
-    //     message: message[0].textContent!,
-    //     authMessage: message[0].textContent!,
-    //   };
-    // }
-    // if (errorMessage) {
-    //   return [];
-    // }
-    // const numOfRows = xmlDoc.getElementsByTagName("numOfRows")[0].textContent;
-
-    // const pageNo = xmlDoc.getElementsByTagName("pageNo")[0].textContent;
-
-    // const totalCount = xmlDoc.getElementsByTagName("totalCount")[0].textContent;
-
-    // const totalPage = xmlDoc.getElementsByTagName("totalPage")[0].textContent;
-
-    // setStates({
-    //   numOfRows: Number(numOfRows),
-    //   totalPage: Number(totalCount),
-    //   pageNo: Number(pageNo),
-    //   totalCount: Number(totalCount),
-    // });
-
-    // const items = xmlDoc.getElementsByTagName("items");
-
-    // const targets = [
-    //   "adoptionStatusCd",
-    //   "age",
-    //   "animalSeq",
-    //   "classification",
-    //   "fileNm",
-    //   "filePath",
-    //   "foundPlace",
-    //   "gender",
-    //   "gu",
-    //   "hairColor",
-    //   "hitCnt",
-    //   "memo",
-    //   "modDtTm",
-    //   "noticeDate",
-    //   "regDtTm",
-    //   "regId",
-    //   "rescueDate",
-    //   "species",
-    //   "weight",
-    // ];
-    // // console.log(items[0]);
-
-    // //반복문돌리기전에 껍데기임
-    // const animals: Animal[] = [];
-    // for (const item of items) {
-    //   const data: any = {};
-    //   console.log(data);
-    //   targets.map((target) => {
-    //     const values = item.getElementsByTagName(target);
-    //     if (values.length > 0 && values[0].textContent) {
-    //       data[target] = values[0].textContent;
-    //     }
-    //   });
-    //   animals.push(data); //animals에 data를 푸쉬해줌
-    // }
-
-    // setAnimals(animals); //setAnimals에 껍데기에 들어가있는 것넣어줌
-  }, [xml]);
+  }, [inView, isPending, hasNextPage, fetchNextPage]);
 
   if (isPending) {
     return <RootLoading />;
   }
   if (error || !data) {
-    return <h1>{error?.message}</h1>;
+    return <h1>Error: {error.message}</h1>;
   }
 
   return (
     <div>
-      {data.pages?.length > 0 ? (
-        <ul className="grid grid-cols-2 gap-2.5 p-2.5">
-          {data.pages.map((page, index) => (
-            <React.Fragment key={index}>
-              {page?.map((animal) => (
-                <li key={animal.regId}>
+      <ul className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2.5 p-2.5">
+        {data.pages.map((page, pageIndex) => {
+          return (
+            <React.Fragment key={pageIndex}>
+              {page.map((animal, index) => (
+                <li key={animal.regId ?? index}>
                   <Image
-                    width={100}
-                    height={100}
                     src={`http://www.daejeon.go.kr/${animal.filePath}`}
                     alt={animal.species}
+                    width={100}
+                    height={100}
                     className="w-full"
                   />
-                  {animal.species}
-                  {animal.hairColor}
-                  {animal.memo}
-                  {animal.rescueDate}
                 </li>
               ))}
             </React.Fragment>
-          ))}
-
-          <li className="p-10 boreder" ref={ref}>
-            fetch more animals
-          </li>
-        </ul>
-      ) : (
-        <h1>유기동물 공고 내역이 존재하지 않습니다.</h1>
-      )}
+          );
+        })}
+        <li className="border h-25" ref={ref}>
+          무한 스크롤 트리거
+        </li>
+      </ul>
     </div>
   );
 };
