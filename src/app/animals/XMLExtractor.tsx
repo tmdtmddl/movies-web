@@ -108,18 +108,25 @@ const XMLExtractor = () => {
         const animals: Animal[] = [];
         for (const item of items) {
           const data: any = {};
+          console.log({ data }, 111);
+
           targets.map((target) => {
             const values = item.getElementsByTagName(target);
+            console.log(item, 112);
+            console.log(values, 114);
             if (values.length > 0 && values[0].textContent) {
+              console.log(values[0].textContent, 116);
               data[target] = values[0].textContent;
             }
           });
 
           animals.push(data);
+          console.log(animals, 123);
         }
         return animals;
       },
     });
+  console.log(data?.pages, 124);
 
   useEffect(() => {
     if (inView && !isPending && hasNextPage) {
