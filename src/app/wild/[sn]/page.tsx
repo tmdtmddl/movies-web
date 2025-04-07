@@ -76,7 +76,7 @@ const WildDtailPage = async (props: PageProps<{ sn: string }>) => {
           <p>
             <b className={fontSize}>포획일자</b>:{wild?.capt_de}
           </p>
-          <p>
+          <p className="min-w-70">
             <b className={fontSize}>포획장소</b>:{wild?.capt_plce_adrs}
           </p>
           <p>

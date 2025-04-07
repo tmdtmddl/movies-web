@@ -77,6 +77,7 @@ const WildHomePage = () => {
         prevPageText={"<"} //이전을 나타낼 텍스트
         nextPageText={">"} //다음을 나타낼 텍스트
         onChange={handlePageChange} //페이지변경을 핸들링하는 함수
+        //Pagination 컴포넌트는 사용자가 페이지 번호를 클릭할 때마다, 그 클릭된 페이지 번호를 onChange 핸들러 함수에 인수로 전달합니다.
       />
     </div>
   );
