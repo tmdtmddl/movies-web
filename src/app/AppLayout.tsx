@@ -15,14 +15,13 @@ const AppLayout = ({ children }: PropsWithChildren) => {
           >
             영화정보통
           </Link>
-          <div>
-            <Link
-              href="/my"
-              className="h-full flex justify-center hover:text-sky-500 items-center px-2.5"
-            >
-              내가 스크랩한 영화
-            </Link>
-          </div>
+
+          <Link
+            href="/my"
+            className="h-full flex justify-center hover:text-sky-500 items-center px-2.5"
+          >
+            내가 스크랩한 영화
+          </Link>
         </div>
       </header>
       <main className="pt-15">{children}</main>

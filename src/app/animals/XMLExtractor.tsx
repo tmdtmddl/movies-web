@@ -142,17 +142,20 @@ const XMLExtractor = () => {
         //동물 하나씩 돌면서 빈 객체 data 만들고,
         for (const item of items) {
           const data: any = {};
+          //data는 빈 객체로, 각 item에서 특정 데이터를 추출해서 넣기 위한 컨테이너 역할을 합니다.
           console.log({ data }, 111);
-
           //target 이름을 하나씩 꺼내서 XML에서 그 태그 값을 찾고, 있으면 data[target]에 넣음.
           // 예:target = "age" → <age>3살</age> → data["age"] = "3살"
           targets.map((target) => {
+            //target은 targets 배열의 각 항목으로, 예를 들어 "age", "name", "species" 등의 문자열이 될 수 있습니다.(target: target은 targets 배열에 있는 각 문자열 값을 가리킵니다. 예를 들어, "age" 또는 "name" 같은 값이 될 수 있습니다.)
             const values = item.getElementsByTagName(target);
             console.log(item, 112);
             console.log(values, 114);
             if (values.length > 0 && values[0].textContent) {
               console.log(values[0].textContent, 116);
-              data[target] = values[0].textContent; //? 데이터 옆에 대괄호는 왜씀??
+              // data는 객체이고, target은 그 객체의 동적 키로 사용됩니다. 즉, data 객체에서 target 값을 키로 사용하여 해당하는 값을 설정하는 방식입니다.
+              data[target] = values[0].textContent;
+              //item.getElementsByTagName(target)을 통해 item(XML 요소)에서 target 태그의 값을 찾아옵니다. values는 해당 태그들을 배열로 반환하며, 그 배열의 첫 번째 요소(values[0])의 텍스트 내용(textContent)을 가져옵니다.
             }
           });
           //다 끝나면 하나의 data를 animals 배열에 넣어줌.
