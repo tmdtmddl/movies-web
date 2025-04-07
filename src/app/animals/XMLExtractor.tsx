@@ -152,7 +152,7 @@ const XMLExtractor = () => {
             console.log(values, 114);
             if (values.length > 0 && values[0].textContent) {
               console.log(values[0].textContent, 116);
-              data[target] = values[0].textContent;
+              data[target] = values[0].textContent; //? 데이터 옆에 대괄호는 왜씀??
             }
           });
           //다 끝나면 하나의 data를 animals 배열에 넣어줌.
