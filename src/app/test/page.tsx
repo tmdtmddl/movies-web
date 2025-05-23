@@ -8,7 +8,7 @@ const onLoad = async (): Promise<any | { message: string }> => {
     return { message: res.statusText };
   }
   const data = await res.json();
-
+  console.log(data, 11);
   return data;
 };
 
