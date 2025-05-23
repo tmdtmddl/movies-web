@@ -10,6 +10,13 @@ const nextConfig: NextConfig = {
         pathname: "/**",
         search: "",
       },
+      {
+        protocol: "http",
+        hostname: "www.daejeon.go.kr",
+        port: "",
+        pathname: "/**",
+        search: "",
+      },
     ],
   },
 };

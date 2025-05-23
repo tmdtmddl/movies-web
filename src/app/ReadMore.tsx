@@ -66,7 +66,6 @@ const ReadMore = (movies: TMDBResponse) => {
       <Wrapper className="p-5 border">
         {isLoading ? "loading..." : "ReadMore"}
       </Wrapper>
-      ;
     </>
   );
 };

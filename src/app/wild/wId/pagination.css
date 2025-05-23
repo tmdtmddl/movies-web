@@ -1,0 +1,26 @@
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 40px;
+}
+
+.pagination li {
+  width: 20px;
+  background-color: whitesmoke;
+  display: flex;
+  justify-content: center;
+  padding: 0 15px;
+
+  border-radius: 20%;
+
+  &:hover,
+  &:active,
+  &.active {
+    background-color: rgb(220, 237, 200);
+  }
+}
+
+.pagination a {
+  font-size: larger;
+}
