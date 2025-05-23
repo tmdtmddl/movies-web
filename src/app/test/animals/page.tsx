@@ -13,4 +13,6 @@
 //   return <div>AnimalPage</div>;
 // };
 
-// export default AnimalPage;
+export default function AnimalPage() {
+  return null;
+}
