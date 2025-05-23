@@ -6,7 +6,7 @@ import RootLoading from "../loading";
 import { FaSortDown, FaCaretUp } from "react-icons/fa";
 import { useRouter } from "next/navigation";
 import Pagination from "react-js-pagination";
-import "../wild/wId/pagination.css";
+// import "../wild/wId/pagination.css";
 
 //Todo
 // 1. api/v1/juso/route.ts
